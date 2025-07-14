@@ -28,3 +28,14 @@ Cypress.Commands.add('login', (login, password) => {
   cy.get('#user_password').type(password);
   cy.get('button[type="submit"]').click();
 });
+
+Cypress.Commands.add('assertApiResponseOk', (res) => {
+  expect(res.status).to.be.oneOf([200, 400, 401, 403, 405]);
+
+  if (res.body?.success === false) {
+    throw new Error(`API Error: ${res.body.error?.info || 'Unknown error'}`);
+  }
+
+  expect(res.body).to.have.property('location');
+  expect(res.body).to.have.property('current');
+});
